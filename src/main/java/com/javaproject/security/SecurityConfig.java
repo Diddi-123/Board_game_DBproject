@@ -1,40 +1,86 @@
 package com.javaproject.security;
 
-import java.io.IOException;
+import javax.sql.DataSource;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
+import org.springframework.security.web.SecurityFilterChain;
 
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.stereotype.Component;
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
 
-@Component
-public class LoggingAccessDeniedHandler implements AccessDeniedHandler {
+private final LoggingAccessDeniedHandler accessDeniedHandler;
 
-@Override
-public void handle(
-        HttpServletRequest request,
-        HttpServletResponse response,
-        AccessDeniedException accessDeniedException)
-        throws IOException, ServletException {
+@Autowired
+@Lazy
+private BCryptPasswordEncoder passwordEncoder;
 
-    Authentication auth =
-            SecurityContextHolder.getContext().getAuthentication();
+@Autowired
+private DataSource dataSource;
 
-    if (auth != null) {
-        String format = "%s was trying to access %s\n";
-        System.out.printf(
-                format,
-                auth.getName(),
-                request.getRequestURI()
+public SecurityConfig(LoggingAccessDeniedHandler accessDeniedHandler) {
+    this.accessDeniedHandler = accessDeniedHandler;
+}
+
+@Bean
+public BCryptPasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+}
+
+@Bean
+public JdbcUserDetailsManager jdbcUserDetailsManager() {
+
+    JdbcUserDetailsManager jdbcUserDetailsManager =
+            new JdbcUserDetailsManager();
+
+    jdbcUserDetailsManager.setDataSource(dataSource);
+
+    return jdbcUserDetailsManager;
+}
+
+@Bean
+public SecurityFilterChain securityFilterChain(HttpSecurity http)
+        throws Exception {
+
+    http
+        .authorizeHttpRequests(auth -> auth
+            .requestMatchers("/user/**")
+                .hasAnyRole("USER", "MANAGER")
+            .requestMatchers("/secured/**")
+                .hasAnyRole("USER", "MANAGER")
+            .requestMatchers("/manager/**")
+                .hasRole("MANAGER")
+            .requestMatchers("/h2-console/**")
+                .permitAll()
+            .requestMatchers("/", "/**")
+                .permitAll()
+        )
+        .formLogin(form -> form
+            .loginPage("/login")
+            .defaultSuccessUrl("/secured")
+            .permitAll()
+        )
+        .logout(logout -> logout
+            .invalidateHttpSession(true)
+            .clearAuthentication(true)
+            .permitAll()
+        )
+        .exceptionHandling(exception -> exception
+            .accessDeniedHandler(accessDeniedHandler)
+        )
+        .csrf(csrf -> csrf.disable())
+        .headers(headers -> headers
+            .frameOptions(frame -> frame.disable())
         );
-    }
 
-    response.sendRedirect("/permission-denied");
+    return http.build();
 }
 
 }
