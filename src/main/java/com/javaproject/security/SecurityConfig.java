@@ -16,7 +16,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-```
 private final LoggingAccessDeniedHandler accessDeniedHandler;
 
 @Autowired
@@ -75,6 +74,5 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
 
     return http.build();
 }
-```
 
 }
