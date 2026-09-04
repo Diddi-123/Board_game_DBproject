@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class LoggingAccessDeniedHandler implements AccessDeniedHandler {
 
-```
 @Override
 public void handle(
         HttpServletRequest request,
@@ -37,6 +36,5 @@ public void handle(
 
     response.sendRedirect("/permission-denied");
 }
-```
 
 }
