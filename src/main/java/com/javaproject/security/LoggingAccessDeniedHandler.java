@@ -27,6 +27,7 @@ public void handle(
 
     if (auth != null) {
         String format = "%s was trying to access %s\n";
+
         System.out.printf(
                 format,
                 auth.getName(),
