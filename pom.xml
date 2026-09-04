@@ -8,14 +8,15 @@
 <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.5.6</version>
+    <version>3.2.12</version>
     <relativePath/>
 </parent>
 
-<!-- Project Information -->
+<!-- Project -->
 <groupId>com.javaproject</groupId>
 <artifactId>database_service_project</artifactId>
 <version>0.0.7-SNAPSHOT</version>
+
 <name>database_service_project</name>
 <description>Project for Spring Boot</description>
 <packaging>jar</packaging>
@@ -23,7 +24,7 @@
 <!-- Properties -->
 <properties>
     <java.version>21</java.version>
-    <jacoco.version>0.8.7</jacoco.version>
+    <jacoco.version>0.8.12</jacoco.version>
 </properties>
 
 <!-- Dependencies -->
@@ -59,10 +60,10 @@
         <artifactId>spring-boot-starter-thymeleaf</artifactId>
     </dependency>
 
-    <!-- Thymeleaf Spring Security -->
+    <!-- Thymeleaf + Spring Security 6 -->
     <dependency>
         <groupId>org.thymeleaf.extras</groupId>
-        <artifactId>thymeleaf-extras-springsecurity5</artifactId>
+        <artifactId>thymeleaf-extras-springsecurity6</artifactId>
     </dependency>
 
     <!-- H2 Database -->
@@ -72,7 +73,7 @@
         <scope>runtime</scope>
     </dependency>
 
-    <!-- Lombok - Java 21 compatible -->
+    <!-- Lombok -->
     <dependency>
         <groupId>org.projectlombok</groupId>
         <artifactId>lombok</artifactId>
@@ -80,14 +81,14 @@
         <optional>true</optional>
     </dependency>
 
-    <!-- Spring Boot Test -->
+    <!-- Testing -->
     <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-test</artifactId>
         <scope>test</scope>
     </dependency>
 
-    <!-- Spring Security Test -->
+    <!-- Spring Security Testing -->
     <dependency>
         <groupId>org.springframework.security</groupId>
         <artifactId>spring-security-test</artifactId>
@@ -151,7 +152,7 @@
     </plugins>
 </build>
 
-<!-- Nexus Repository -->
+<!-- Nexus -->
 <distributionManagement>
 
     <repository>
